@@ -107,7 +107,7 @@ const DEVELOPER = {
   photo: "images/developer.jpg", // upload this file; falls back to an icon avatar if missing
   github: "",     // e.g. "https://github.com/yourusername"
   instagram: "https://www.instagram.com/gh9aravind_3000?igsh=MWtxdWNvaGU2YXhvMg==",  // e.g. "https://instagram.com/yourusername"
-  whatsapp: "@gh9aravind_3000",   // e.g. "919999999999" (digits only, no +)
+  whatsapp: "gh9aravind_3000",   // WhatsApp username — @ okay, it's stripped automatically
   email: "aravindreji24@gmail.com",      // e.g. "you@example.com"
 };
 
@@ -447,7 +447,7 @@ function Header({ onBookClick }) {
 function AboutDeveloperModal({ onClose }) {
   const [imgError, setImgError] = useState(false);
   const links = [
-    DEVELOPER.whatsapp && { href: "https://wa.me/" + DEVELOPER.whatsapp, label: "WhatsApp", icon: IconChat },
+    DEVELOPER.whatsapp && { href: "https://wa.me/" + DEVELOPER.whatsapp.replace(/^@/, ""), label: "WhatsApp", icon: IconChat },
     DEVELOPER.github && { href: DEVELOPER.github, label: "GitHub", icon: IconLink },
     DEVELOPER.instagram && { href: DEVELOPER.instagram, label: "Instagram", icon: IconLink },
     DEVELOPER.email && { href: "mailto:" + DEVELOPER.email, label: "Email", icon: IconMail },
