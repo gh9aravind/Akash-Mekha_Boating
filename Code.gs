@@ -19,7 +19,7 @@ const SHEET_NAME = 'Bookings';
 const REVIEWS_SHEET_NAME = 'Reviews';
 
 // Get this from @BotFather on Telegram (see SETUP_GUIDE.md)
-const TELEGRAM_BOT_TOKEN = '8664862882:AAHY5aEbRPPuwuX4F-F6d62XPGsuYkX1L6A';
+const TELEGRAM_BOT_TOKEN = '8664862882:AAFldEQNJAQvSaX69Oe6M2WA5ZmYX6KRwo0';
 
 // Get this from @userinfobot or the getUpdates trick (see SETUP_GUIDE.md)
 const TELEGRAM_CHAT_ID = '-1004441390207';
