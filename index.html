@@ -88,6 +88,24 @@
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-thumb { background: #EC4899; border-radius: 8px; }
 
+  /* Disable text selection and long-press image save across the site */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none; /* stops the iOS long-press "Save Image" menu */
+}
+input, textarea {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text; /* form fields must stay normally selectable/editable */
+}
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none; /* blocks long-press/drag on the image itself */
+}
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -1586,7 +1604,7 @@ function App() {
 
   return (
     <LanguageContext.Provider value={{ lang, toggleLang }}>
-      <div className="font-body">
+      <div className="font-body" onContextMenu={e => e.preventDefault()} onDragStart={e => e.preventDefault()}>
         <Header onBookClick={scrollToBooking} />
         <Hero onBookClick={scrollToBooking} />
         <Packages onBookClick={scrollToBooking} />
