@@ -20,7 +20,7 @@ const REVIEWS_SHEET_NAME = 'Reviews';
 const BUGS_SHEET_NAME = 'BugReports';
 
 // Get this from @BotFather on Telegram (see SETUP_GUIDE.md)
-const TELEGRAM_BOT_TOKEN = 'PASTE_YOUR_BOT_TOKEN_HERE';
+const TELEGRAM_BOT_TOKEN = '8664862882:AAHY5aEbRPPuwuX4F-F6d62XPGsuYkX1L6A';
 
 // Get this from @userinfobot or the getUpdates trick (see SETUP_GUIDE.md)
 const TELEGRAM_CHAT_ID = 'PASTE_YOUR_CHAT_ID_HERE';
