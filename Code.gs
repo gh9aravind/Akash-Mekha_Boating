@@ -23,7 +23,7 @@ const BUGS_SHEET_NAME = 'BugReports';
 const TELEGRAM_BOT_TOKEN = '8664862882:AAHY5aEbRPPuwuX4F-F6d62XPGsuYkX1L6A';
 
 // Get this from @userinfobot or the getUpdates trick (see SETUP_GUIDE.md)
-const TELEGRAM_CHAT_ID = 'PASTE_YOUR_CHAT_ID_HERE';
+const TELEGRAM_CHAT_ID = '-1004441390207';
 
 // Where bug reports go — this should be the DEVELOPER's own Telegram chat ID,
 // not the business owners' group above (they can't fix code bugs).
