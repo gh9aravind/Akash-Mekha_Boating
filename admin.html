@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>Malarikkal Bookings — Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+
+<!-- Fonts: same pair as the main site, for brand consistency -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          lake: { DEFAULT: '#0B4F6C', teal: '#146C94', deep: '#082F3F' },
+          lily: { pink: '#EC4899', rose: '#F43F5E' },
+          gold: { DEFAULT: '#F4A100', light: '#FBBF24' },
+          mist: '#FAF7F2',
+          ink: '#0D2B36',
+        },
+        fontFamily: {
+          display: ['Fraunces', 'serif'],
+          body: ['Manrope', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  body { font-family: 'Manrope', sans-serif; background: #FAF7F2; color: #0D2B36; }
+  .font-display { font-family: 'Fraunces', serif; }
+
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  .skeleton {
+    background: linear-gradient(90deg, rgba(11,79,108,0.06) 25%, rgba(11,79,108,0.14) 37%, rgba(11,79,108,0.06) 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  @keyframes shake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+  .animate-shake { animation: shake 0.5s; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-up { animation: fadeUp 0.4s ease-out both; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js" crossorigin></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+/* =====================================================================
+   CONFIG — edit these after deployment
+   ===================================================================== */
+// Same Apps Script URL as the main site (index.html).
+const APPS_SCRIPT_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+// Must EXACTLY match DASHBOARD_ACCESS_KEY in Code.gs — this is what lets
+// the Apps Script backend know this request is really from the dashboard
+// and not a random visitor guessing the URL.
+const DASHBOARD_ACCESS_KEY = "PASTE_THE_SAME_SECRET_KEY_FROM_CODE.GS_HERE";
+
+// A simple PIN only Akash/Subhash know. This is a casual deterrent, not
+// real security — anyone with this file's source can read it. The actual
+// data protection is DASHBOARD_ACCESS_KEY above, checked on the server.
+const DASHBOARD_PIN = "1234";
+
+/* =====================================================================
+   ICONS — small inline SVGs, same minimal style as the main site
+   ===================================================================== */
+const Icon = ({ children, className = "w-5 h-5", ...props }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+       strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+    {children}
+  </svg>
+);
+const IconLock = (p) => <Icon {...p}><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></Icon>;
+const IconPhone = (p) => <Icon {...p}><path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 2 6a2 2 0 0 1 2-2Z"/></Icon>;
+const IconChat = (p) => <Icon {...p}><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.4 8.4 0 0 1-3.9-.94L3 20l1.06-4.24A8.5 8.5 0 1 1 21 11.5Z"/></Icon>;
+const IconCalendar = (p) => <Icon {...p}><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="16" y1="3" x2="16" y2="7"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="3" y1="10" x2="21" y2="10"/></Icon>;
+const IconClock = (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></Icon>;
+const IconUsers = (p) => <Icon {...p}><circle cx="9" cy="8" r="3.5"/><path d="M2.5 21c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17.5" cy="9" r="2.7"/><path d="M15.8 15.7c2.6.3 4.7 2 4.7 5.3"/></Icon>;
+const IconRefresh = (p) => <Icon {...p}><path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/></Icon>;
+const IconLogOut = (p) => <Icon {...p}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></Icon>;
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+function todayISO() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 10);
+}
+
+function formatDateNice(iso) {
+  if (!iso) return "";
+  if (iso === todayISO()) return "Today";
+  try {
+    const d = new Date(iso + "T00:00:00");
+    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  } catch (e) {
+    return iso;
+  }
+}
+
+function waNumber(phone) {
+  let d = String(phone || "").replace(/\D/g, "");
+  if (d.length === 10) d = "91" + d;
+  return d;
+}
+
+function statusClasses(status) {
+  if (status === "Confirmed") return "bg-lake/10 text-lake";
+  if (status === "Cancelled") return "bg-lily-rose/10 text-lily-rose";
+  return "bg-gold/10 text-gold"; // "New" or anything else
+}
+
+/* =====================================================================
+   PIN GATE
+   ===================================================================== */
+function PinGate({ onUnlock }) {
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState(false);
+
+  function handleSubmit(ev) {
+    ev.preventDefault();
+    if (pin === DASHBOARD_PIN) {
+      try { localStorage.setItem("malarikkal_admin_authed", "true"); } catch (e) { /* ignore */ }
+      onUnlock();
+    } else {
+      setError(true);
+      setPin("");
+      setTimeout(() => setError(false), 500);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-lake-deep flex items-center justify-center p-6 font-body">
+      <form onSubmit={handleSubmit} className={"bg-mist rounded-3xl p-8 w-full max-w-sm text-center " + (error ? "animate-shake" : "")}>
+        <div className="w-14 h-14 rounded-full bg-lake/10 flex items-center justify-center mx-auto mb-4">
+          <IconLock className="w-6 h-6 text-lake" />
+        </div>
+        <p className="font-display text-xl font-bold text-ink mb-1">Malarikkal Admin</p>
+        <p className="text-ink/50 text-sm mb-6">Enter PIN to view bookings</p>
+        <input
+          type="password" inputMode="numeric" autoFocus value={pin}
+          onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
+          className="w-full text-center text-2xl tracking-[0.5em] rounded-xl border-2 border-black/10 bg-white px-4 py-3 mb-4 focus:border-lily-rose focus:outline-none transition"
+          placeholder="••••"
+          maxLength={8}
+        />
+        {error && <p className="text-lily-rose text-xs mb-3">Wrong PIN, try again.</p>}
+        <button type="submit" className="w-full bg-lily-rose text-white font-bold py-3.5 rounded-full active:scale-95 transition">
+          Unlock
+        </button>
+      </form>
+    </div>
+  );
+}
+
+/* =====================================================================
+   BOOKING CARD
+   ===================================================================== */
+function BookingCard({ b }) {
+  return (
+    <div className="bg-white rounded-3xl p-5 shadow-sm border border-black/5 animate-fade-up">
+      <div className="flex items-start justify-between mb-3 gap-2">
+        <div className="min-w-0">
+          <p className="font-display text-lg font-bold text-ink truncate">{b.name}</p>
+          <p className="text-xs text-ink/40">{b.bookingId}</p>
+        </div>
+        <span className={"text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shrink-0 " + statusClasses(b.status)}>
+          {b.status || "New"}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-y-2 gap-x-3 mb-4 text-sm text-ink/70">
+        <div className="flex items-center gap-1.5"><IconCalendar className="w-4 h-4 text-lake shrink-0" /> {formatDateNice(b.date)}</div>
+        <div className="flex items-center gap-1.5"><IconClock className="w-4 h-4 text-lake shrink-0" /> {b.timeSlotLabel}</div>
+        <div className="flex items-center gap-1.5"><IconUsers className="w-4 h-4 text-lake shrink-0" /> {b.adults} adults{Number(b.kids) > 0 ? ", " + b.kids + " kids" : ""}</div>
+        <div className="flex items-center gap-1.5 font-bold text-lily-rose">₹{b.totalPrice}</div>
+      </div>
+
+      <div className="flex gap-2 pt-3 border-t border-black/5">
+        <a href={"tel:" + b.phone}
+          className="flex-1 flex items-center justify-center gap-1.5 bg-lake text-white font-bold py-3 rounded-full text-sm active:scale-95 transition">
+          <IconPhone className="w-4 h-4" /> Call
+        </a>
+        <a href={"https://wa.me/" + waNumber(b.phone)} target="_blank" rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-1.5 bg-[#25D366] text-white font-bold py-3 rounded-full text-sm active:scale-95 transition">
+          <IconChat className="w-4 h-4" /> WhatsApp
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   APP
+   ===================================================================== */
+function App() {
+  const [authed, setAuthed] = useState(() => {
+    try { return localStorage.getItem("malarikkal_admin_authed") === "true"; } catch (e) { return false; }
+  });
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [filter, setFilter] = useState("today"); // "today" | "all"
+  const [lastLoaded, setLastLoaded] = useState(null);
+
+  async function loadBookings() {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + "?action=bookings&key=" + encodeURIComponent(DASHBOARD_ACCESS_KEY));
+      const data = await res.json();
+      if (data.success) {
+        setBookings(data.bookings || []);
+        setLastLoaded(new Date());
+      } else {
+        setError(data.error || "Could not load bookings.");
+      }
+    } catch (e) {
+      setError("Could not reach the server. Check your connection.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (authed) loadBookings();
+  }, [authed]);
+
+  function handleLogout() {
+    try { localStorage.removeItem("malarikkal_admin_authed"); } catch (e) { /* ignore */ }
+    setAuthed(false);
+  }
+
+  if (!authed) return <PinGate onUnlock={() => setAuthed(true)} />;
+
+  const today = todayISO();
+  const todaysBookings = bookings.filter(b => b.date === today);
+  const shown = filter === "today" ? todaysBookings : bookings;
+
+  return (
+    <div className="min-h-screen bg-mist font-body pb-10">
+      <header className="bg-lake-deep text-white px-5 py-5 sticky top-0 z-10 shadow-md">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-display text-xl font-bold leading-tight">Malarikkal Bookings</p>
+            <p className="text-white/50 text-xs">Admin Dashboard</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={loadBookings} disabled={loading} aria-label="Refresh"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center active:scale-90 transition disabled:opacity-50">
+              <IconRefresh className={"w-4 h-4 " + (loading ? "animate-spin" : "")} />
+            </button>
+            <button onClick={handleLogout} aria-label="Logout"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center active:scale-90 transition">
+              <IconLogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="px-5 pt-5 max-w-xl mx-auto">
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-black/5">
+            <p className="font-display text-2xl font-bold text-lake">{todaysBookings.length}</p>
+            <p className="text-xs text-ink/50">Today's Bookings</p>
+          </div>
+          <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-black/5">
+            <p className="font-display text-2xl font-bold text-lily-rose">{bookings.length}</p>
+            <p className="text-xs text-ink/50">Total Bookings</p>
+          </div>
+        </div>
+
+        <div className="flex gap-2 mb-5">
+          <button onClick={() => setFilter("today")}
+            className={"flex-1 py-2.5 rounded-full text-sm font-bold transition " + (filter === "today" ? "bg-lily-rose text-white" : "bg-white text-ink/60 border border-black/10")}>
+            Today's Bookings
+          </button>
+          <button onClick={() => setFilter("all")}
+            className={"flex-1 py-2.5 rounded-full text-sm font-bold transition " + (filter === "all" ? "bg-lily-rose text-white" : "bg-white text-ink/60 border border-black/10")}>
+            All Bookings
+          </button>
+        </div>
+
+        {error && (
+          <div className="bg-lily-rose/10 border border-lily-rose/30 text-lily-rose text-sm rounded-2xl p-4 mb-5">{error}</div>
+        )}
+
+        {loading && bookings.length === 0 ? (
+          <div className="space-y-3">
+            {[0, 1, 2].map(i => <div key={i} className="skeleton h-32 rounded-3xl"></div>)}
+          </div>
+        ) : shown.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-ink/40">No bookings {filter === "today" ? "for today" : "yet"}.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {shown.map(b => <BookingCard key={b.bookingId} b={b} />)}
+          </div>
+        )}
+
+        {lastLoaded && (
+          <p className="text-center text-ink/30 text-xs mt-6">
+            Last updated {lastLoaded.toLocaleTimeString("en-IN")}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
