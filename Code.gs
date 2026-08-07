@@ -50,7 +50,7 @@ const CALLMEBOT_API_KEY = 'PASTE_YOUR_CALLMEBOT_API_KEY_HERE';  // the key the C
 // admin.html's DASHBOARD_ACCESS_KEY. This isn't bank-grade security (anyone
 // who gets admin.html's source can also read the key) but it stops casual/
 // accidental exposure, which is the right level for this use case.
-const DASHBOARD_ACCESS_KEY = 'PASTE_A_LONG_RANDOM_SECRET_HERE';
+const DASHBOARD_ACCESS_KEY = 'mlrkl9x7Qp2vB4nWzR8tKd';
 
 // Sheet column order — keep this in sync with the header row below
 const COLUMNS = [
