@@ -73,17 +73,17 @@ const { useState, useEffect } = React;
    CONFIG — edit these after deployment
    ===================================================================== */
 // Same Apps Script URL as the main site (index.html).
-const APPS_SCRIPT_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbysPjvA5_tNF4uAK8y2GseUYlYRFpEhxfaOc6iiEI_vuZZnxo1XzvJuYMDotw0xhVs/exec";
 
 // Must EXACTLY match DASHBOARD_ACCESS_KEY in Code.gs — this is what lets
 // the Apps Script backend know this request is really from the dashboard
 // and not a random visitor guessing the URL.
-const DASHBOARD_ACCESS_KEY = "PASTE_THE_SAME_SECRET_KEY_FROM_CODE.GS_HERE";
+const DASHBOARD_ACCESS_KEY = "mlrkl9x7Qp2vB4nWzR8tKd";
 
 // A simple PIN only Akash/Subhash know. This is a casual deterrent, not
 // real security — anyone with this file's source can read it. The actual
 // data protection is DASHBOARD_ACCESS_KEY above, checked on the server.
-const DASHBOARD_PIN = "1234";
+const DASHBOARD_PIN = "olakkedemood";
 
 /* =====================================================================
    ICONS — small inline SVGs, same minimal style as the main site
