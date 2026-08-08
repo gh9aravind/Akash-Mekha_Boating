@@ -20,17 +20,17 @@ const REVIEWS_SHEET_NAME = 'Reviews';
 const BUGS_SHEET_NAME = 'BugReports';
 
 // Get this from @BotFather on Telegram (see SETUP_GUIDE.md)
-const TELEGRAM_BOT_TOKEN = 'PASTE_YOUR_BOT_TOKEN_HERE';
+const TELEGRAM_BOT_TOKEN = '8664862882:AAFldEQNJAQvSaX69Oe6M2WA5ZmYX6KRwo0';
 
 // Get this from @userinfobot or the getUpdates trick (see SETUP_GUIDE.md)
-const TELEGRAM_CHAT_ID = 'PASTE_YOUR_CHAT_ID_HERE';
+const TELEGRAM_CHAT_ID = '1004441390207';
 
 // Where bug reports go — this should be the DEVELOPER's own Telegram chat ID,
 // not the business owners' group above (they can't fix code bugs).
 // Easiest way: message the SAME bot privately from the developer's own
 // Telegram account, then read the chat ID from getUpdates same as before.
 // Leave blank ('') to just send bug reports to TELEGRAM_CHAT_ID instead.
-const DEVELOPER_TELEGRAM_CHAT_ID = 'PASTE_DEVELOPER_CHAT_ID_HERE';
+const DEVELOPER_TELEGRAM_CHAT_ID = '8552156658';
 
 // ---- WhatsApp alerts via CallMeBot (free API, personal use only) ----
 // Setup (one-time):
