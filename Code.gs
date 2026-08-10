@@ -20,17 +20,17 @@ const REVIEWS_SHEET_NAME = 'Reviews';
 const BUGS_SHEET_NAME = 'BugReports';
 
 // Get this from @BotFather on Telegram (see SETUP_GUIDE.md)
-const TELEGRAM_BOT_TOKEN = 'PASTE_YOUR_BOT_TOKEN_HERE';
+const TELEGRAM_BOT_TOKEN = '8664862882:AAFldEQNJAQvSaX69Oe6M2WA5ZmYX6KRwo0';
 
 // Get this from @userinfobot or the getUpdates trick (see SETUP_GUIDE.md)
-const TELEGRAM_CHAT_ID = 'PASTE_YOUR_CHAT_ID_HERE';
+const TELEGRAM_CHAT_ID = '-1004441390207';
 
 // Where bug reports go — this should be the DEVELOPER's own Telegram chat ID,
 // not the business owners' group above (they can't fix code bugs).
 // Easiest way: message the SAME bot privately from the developer's own
 // Telegram account, then read the chat ID from getUpdates same as before.
 // Leave blank ('') to just send bug reports to TELEGRAM_CHAT_ID instead.
-const DEVELOPER_TELEGRAM_CHAT_ID = 'PASTE_DEVELOPER_CHAT_ID_HERE';
+const DEVELOPER_TELEGRAM_CHAT_ID = '8552156658';
 
 // ---- WhatsApp alerts via CallMeBot (free API, personal use only) ----
 // Setup (one-time):
@@ -50,7 +50,7 @@ const CALLMEBOT_API_KEY = 'PASTE_YOUR_CALLMEBOT_API_KEY_HERE';  // the key the C
 // admin.html's DASHBOARD_ACCESS_KEY. This isn't bank-grade security (anyone
 // who gets admin.html's source can also read the key) but it stops casual/
 // accidental exposure, which is the right level for this use case.
-const DASHBOARD_ACCESS_KEY = 'PASTE_A_LONG_RANDOM_SECRET_HERE';
+const DASHBOARD_ACCESS_KEY = 'mlrkl9x7Qp2vB4nWzR8tKd';
 
 const IMAGES_SHEET_NAME = 'GalleryImages';
 
